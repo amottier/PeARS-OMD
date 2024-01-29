@@ -1,28 +1,36 @@
-Test
+## Deployment description
+
+Various possible deployments configurations of PeARS combined with On My Disk are described below.
+
+### Integrated on onmydisk.net
+
+In this deployment PeARS is hosted along the server side component of On My Disk.
 
 ```mermaid
     C4Context
-      title PeARS - On My Disk integration architecture overview
-      Enterprise_Boundary(global, "PeARS - On My Disk integration") {
-        
-        Enterprise_Boundary(user, "End user computer") {
-          Person(user, "User", "A user")
+      title Integrated on onmydisk.net
+      Boundary(pears-omd-integration, "PeARS - On My Disk integration") {
+        Person(user, "End user")
+      
+        Boundary(b1, "End user computer") {
+      
           System(storage, "Personal storage", "E.g. a computer hard drive.")
+      
           System(omd-desktop-client, "On My Disk desktop client", "Indexes files")
         }
-        Enterprise_Boundary(omd-net, "onmydisk.net") {
-          System(omd-server, "On MyDisk server")
+      
+        Boundary(b2, "onmydisk.net") {
+          System(omd-server, "On MyDisk server", "Indexes files content")
           System(pears, "PeARS")
         }
       }
+      
+      Rel(user, storage, "Store files")
+      Rel(omd-desktop-client, storage, "Accesses and indexes files")
+      BiRel(omd-server, omd-desktop-client, "Uses to access files content")
+      Rel(pears, omd-server, "Get content indexes - delegate user auth")
+      Rel(omd-server, pears, "Delegate search feature")
 
+      UpdateRelStyle(omd-server, pears, $textColor="red", $offsetY="00")
 
-
-      UpdateElementStyle(customerA, $fontColor="red", $bgColor="grey", $borderColor="red")
-      UpdateRelStyle(customerA, SystemAA, $textColor="blue", $lineColor="blue", $offsetX="5")
-      UpdateRelStyle(SystemAA, SystemE, $textColor="blue", $lineColor="blue", $offsetY="-10")
-      UpdateRelStyle(SystemAA, SystemC, $textColor="blue", $lineColor="blue", $offsetY="-40", $offsetX="-50")
-      UpdateRelStyle(SystemC, customerA, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
-
-      UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 ```
